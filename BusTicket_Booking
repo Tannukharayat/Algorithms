@@ -1,0 +1,324 @@
+/* Program to booked seats in bus through login id */
+#include<bits/stdc++.h>
+using namespace std;
+
+class nodel
+{
+public:
+    int ids;
+    string psw;
+    nodel *next;
+};
+
+class member
+{
+    nodel *head=NULL;
+public:
+    void create();
+    int check(int , string);
+};
+
+int member::check(int a,string s)
+{
+    nodel *start=head;
+    while(start!=NULL)
+    {
+        if(start->ids==a && start->psw==s)
+            return 1;
+        start=start->next;
+    }
+    return 0;
+
+}
+
+void member::create()
+{
+    int a;
+    string s;
+    cout<<"\nENTER ID: ";
+    cin>>a;
+    cout<<"\nENTER PASSWORD: ";
+    cin>>s;
+    if(!(this->check(a,s)))
+    {
+
+
+        nodel *temp = new nodel;
+        temp->ids=a;
+        temp->psw=s;
+        temp->next=NULL;
+
+        nodel* start = head;
+        if(head==NULL)
+        {
+            head=temp;
+            start=temp;
+        }
+        else
+        {
+            while(start->next != NULL)
+                start=start->next;
+            start->next=temp;
+        }
+        cout<<"\nID CREATED. \n\tPLEASE LOG IN TO CONTINUE.";
+    }
+
+    else
+    {
+        cout<<"\nTHIS ID OR PASSWORD IS ALREADY TAKEN.";
+    }
+}
+
+class node
+{
+public:
+    int id;
+    char data;
+    string pwd;
+    node *next;
+};
+
+class bus
+{
+    node *head[10];
+    node *start[10];
+public:
+    bus();
+    void display();
+    void available();
+    void book(int ,string );
+    void cancel(int,string );
+};
+
+bus::bus()
+{
+    int i,j;
+    for(i=0;i<10;i++)
+        {
+            head[i]=NULL;
+            start[i]=NULL;
+        }
+    for(i=0;i<10;i++)
+    {
+        for(j=0;j<4;j++)
+        {
+            node *temp=new node;
+            temp->id=0;
+            temp->pwd='o';
+            temp->data='-';
+            temp->next=NULL;
+
+            if(head[i]==NULL)
+            {
+                start[i]=temp;
+                head[i]=temp;
+            }
+            else
+            {
+                start[i]->next=temp;
+                start[i]=start[i]->next;
+            }
+
+        }
+        start[i]->next=head[i];
+    }
+}
+
+void bus::display()
+{
+    int i,j;
+    cout<<"\n";
+    cout<<"  ";
+    for(i=0;i<4;i++)
+        cout<<i<<" ";
+    cout<<"\n";
+    for(i=0;i<10;i++)
+    {
+
+        cout<<i<<" ";
+        for(j=0;j<4;j++)
+        {
+            cout<<start[i]->data<<" ";
+            start[i]=start[i]->next;
+        }
+        cout<<"\n";
+    }
+}
+
+void bus::available()
+{
+    cout<<"\n- means empty.";
+    cout<<"\n* means booked.";
+
+        int i,j,count=0;
+        cout<<"\n";
+    cout<<"  ";
+    for(i=0;i<4;i++)
+        cout<<i<<" ";
+    cout<<"\n";
+    for(i=0;i<10;i++)
+    {
+
+        cout<<i<<" ";
+        for(j=0;j<4;j++)
+        {
+            if(start[i]->data=='-')
+                count++;
+            cout<<start[i]->data<<" ";
+            start[i]=start[i]->next;
+
+        }
+        cout<<"\n";
+    }
+
+    cout<<"\nAVAILABLE SEATS ARE: "<<count;
+    cout<<"\nBOOKED SEATS ARE: "<<40-count;
+
+}
+
+void bus::book(int a, string s)
+{
+    this->available();
+    int x,y,j;
+    char ch;
+    do
+    {
+        cout<<"\nENTER SEAT NO. (ROW AN COL.): ";
+        cin>>x>>y;
+        if(x>=0 && x<=9 && y>=0 && y<=3)
+        {
+                    for(j=0;j<4;j++)
+                {
+                    if(j==y)
+                    {
+                        if(start[x]->data=='-')
+                        {
+                            start[x]->data='*';
+                            start[x]->id=a;
+                            start[x]->pwd=s;
+                            cout<<"\nYOUR SEAT IS BOOKED";
+                        }
+                        else
+                        {
+                            cout<<"\nTHIS SEAT NO IS ALREADY BOOKED.";
+                        }
+                    }
+                    start[x]=start[x]->next;
+                }
+        }
+
+        else
+        {
+            cout<<"\nENTERED SEAT NO. DOESNOT EXIST.";
+        }
+
+
+        cout<<"\nDO YOU WANT TO BOOK MORE SEATS? (Y/N): ";
+        cin>>ch;
+
+    }while(ch=='y' || ch=='Y');
+
+
+}
+
+void bus::cancel(int a, string s)
+{
+    this->available();
+    int x,y,j;
+    char ch;
+    do
+    {
+        cout<<"\nENTER SEAT NO (ROW , COL) : ";
+        cin>>x>>y;
+        if(x>=0 && x<=9 && y>=0 && y<=3)
+        {
+
+            for(j=0;j<4;j++)
+                {
+                    if(j==y)
+                    {
+                        if(start[x]->data=='*' && start[x]->id == a && start[x]->pwd==s)
+                        {
+                            start[x]->data='-';
+                            start[x]->id=0;
+                            start[x]->pwd='o';
+                            cout<<"\nYOUR SEAT IS CANCELED";
+                        }
+                        else
+                        {
+                            cout<<"\nTHIS SEAT NO IS NOT BOOKED BY YOU.";
+                        }
+                    }
+                    start[x]=start[x]->next;
+                }
+        }
+
+        else
+            cout<<"\nENTERED SEAT NO DOESNOT EXIST. ";
+        cout<<"\nDO YOU WANT TO CANCEL MORE SEATS? (Y/N): ";
+        cin>>ch;
+    }while(ch=='y' || ch=='Y');
+}
+
+welcome(int a, string s, bus &b)
+{
+            cout<<"\n\nWELCOME ID NO : "<<a<<" TO THIS APP.";
+    int c;
+    do
+    {
+        cout<<"\n";
+
+        cout<<"\n\t1CHECK AVAILABLE SEATS.";
+        cout<<"\n\t2.BOOK SEAT.";
+        cout<<"\n\t3.CANCEL SEAT.";
+        cout<<"\n\t4.LOG OUT.";
+        cout<<"\nENTER CHOICE: ";
+        cin>>c;
+
+        switch(c)
+        {
+            case 1: b.available();
+                    break;
+            case 2: b.book(a,s);
+                    break;
+            case 3: b.cancel(a,s);
+                    break;
+            case 4: break;
+        }
+    }while(c!=4);
+
+}
+
+int main()
+{
+    int c;
+    int a;
+    string s;
+    member m;
+    bus b;
+    do
+    {
+        cout<<"\n\n______________BOOK BUS TICKET____________\n";
+        cout<<"\n1.CREATE NEW ID";
+        cout<<"\n2.LOG IN";
+        cout<<"\n3.EXIT";
+        cout<<"\nENTER CHOICE: ";
+        cin>>c;
+
+        switch(c)
+        {
+            case 1: m.create();
+                    break;
+            case 2: cout<<"\nENTER ID: ";
+                    cin>>a;
+                    cout<<"\nENTER PASSWORD: ";
+                    cin>>s;
+                    if(m.check(a,s))
+                        welcome(a,s,b);
+                    else
+                        cout<<"\nTHIS ID PASSWORD DOES NOT EXIST.";
+                    break;
+            case 3: break;
+        }
+    }while(c!=3);
+}
