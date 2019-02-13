@@ -1,0 +1,247 @@
+/* Program to book movie tickets in theatre */
+#include<bits/stdc++.h>
+using namespace std;
+int n,m,a,b;
+class node
+{
+	public:
+		char info;
+	string id;
+	int pd;
+	node *prev;
+	node *next;
+	node()
+	{
+		pd=0;
+		id="/0";
+	}
+};
+class hall
+{
+	node *head[10];
+	node *start[10];
+	public:
+		hall()
+		{
+			int i,j;
+			for(int i=0;i<10;i++)
+			{
+				head[i]=NULL;
+				start[i]=NULL;
+			}
+			for(i=0;i<10;i++)
+			{
+				for(int j=0;j<7;j++)
+				{
+					node *temp=new node;
+					temp->prev=temp;
+					temp->next=temp;
+					temp->info='-';
+					if(head[i]==NULL)
+					{
+						head[i]=temp;
+						start[i]=temp;
+					}else
+					{
+						temp->prev=start[i];
+						start[i]->next=temp;
+						start[i]=start[i]->next;
+					}
+				}
+				start[i]->next=head[i];
+				head[i]->prev=start[i];
+				start[i]=start[i]->next;
+			}
+		}
+		void create(int,string);
+		void display();
+		void book(string,int);
+		void cancel(int ,string);
+		void available();
+};
+void hall::display()
+{
+	cout<<"Booked seats-1, Empty seats- *";
+	cout<<"\n";
+	int i,j;
+	for(int i=0;i<10;i++)
+	{
+		cout<<"Row "<<i<<endl;
+		for(int j=0;j<7;j++)
+		{
+			if(start[i]->info=='-')
+			{
+				cout<<"\n Empty seats";
+			}else cout<<"Seat is filled";
+			start[i]=start[i]->next;
+		}cout<<endl;
+	}
+}
+void hall::book(string id, int pd)
+{
+	cout<<"\n Enter the number of seats u want to booked:- ";
+	cin>>n;
+	while(n>70)
+	{
+		cout<<"\n Unavailable seats, Enter the valid number:- ";
+		cin>>n;
+	}
+	while(n<0)
+	{
+		cout<<"\n Enter valid seat number:- ";
+		cin>>n;
+	}
+	if(n==0)
+	{
+		cout<<"Thankyou for visiting our site";
+	}
+	if(n>0&&n<=70)
+	{
+		
+		for(int i=0;i<n;i++)
+		{
+			cout<<"Enter the row & seat no"<<i<<":- ";
+			cin>>a>>b;
+			a=a-1;
+	     	b=b-1;
+			if(a<0 || a>9 || b<0 || b>6)
+             {
+                  cout<<"\nSeat not available.";
+                   i--;
+             }else
+             {
+             	int o=0;
+             	start[a]=head[a];
+             	for(int j=0;j<7;j++)
+             	{
+             		if(b==j)
+					 {
+					 	if(start[a]->info=='-')
+					 	{
+					 		start[a]->info='a';
+					 		start[a]->id=id;
+					 			start[a]->pd=pd;
+								 o=1;
+						 }
+				     }start[a]=start[a]->next;	
+				}
+				if(o==0)
+				{
+				     	cout<<"Already booked";
+				     	i--;
+				} 
+			}
+	 }
+}
+}
+void hall::available()
+{
+	cout<<"\n Availabe seats in row: ";
+	for(int i=0;i<10;i++)
+	{
+		int count=0;
+		int max=0;
+		int sum=0;
+		for(int j=0;j<7;j++)
+		{
+			if(start[i]->info=='-')
+			{
+				count++;
+				sum++;
+			}else 
+			count=0;
+			if(max<count)
+			max=count;
+			start[i]=start[i]->next;
+		}
+		cout<<"\n"<<"Row "<<i<<"-"<<"\n Total available seat:"<<sum<<"\n Maximum continuous available seat: "<<max;
+	}
+}
+void hall::cancel(int pd,string id) 
+{
+	cout<<"\n Enter the number u want to cancel:- ";
+		while(n>70)
+	{
+		cout<<"\n Unavailable seats, Enter the valid number:- ";
+		cin>>n;
+	}
+	while(n<0)
+	{
+		cout<<"\n Enter valid seat count:- ";
+		cin>>n;
+	}
+	if(n==0)
+	{
+		cout<<"Thankyou for visiting our site";
+	}else
+    if(n>0&&n<=70)
+	{
+		cout<<"Enter the row & seat no:- ";
+		a=a-1;
+		b=b-1;
+		for(int i=0;i<n;i++)
+		{
+			cin>>a>>b;
+			if(a<0 || a>9 || b<0 || b>6)
+             {
+                  cout<<"\nSeat not available.";
+                   i--;
+             }else
+             {
+             	start[a]=head[a];
+             	for(int j=0;j<7;j++)
+             	{
+             		if(b==j)
+					 {
+					 	if(start[a]->info=='a'&&start[a]->id==id&&start[a]->pd==pd)
+					 	{
+					 	start[a]->info=='-';
+					 		cout<<"\n Ticket cancelled successfully!!";
+				   	    }else 
+						   {
+                            cout<<"\nSeat is not booked by you.";
+				     		i--;
+					 		} start[a]=start[a]->next;	
+					} 
+			 	}
+			}
+		}
+	}
+}
+int main()
+{
+    hall h;
+   char c;
+   int z,q;
+   string w;
+        do
+    {
+        cout<<"\n1.Check available seats.\n2.Book seats by seat number.\n3.cancel seat.\n4.display the status.";
+        cout<<"\nEnter your choice: ";
+        cin>>z;
+        switch(z)
+        {
+            case 1: 
+			 h.available();
+                     break;
+            case 2: 
+			cout<<"\n Enter id (char):- ";
+                    cin>>w;
+                    cout<<"\nEnter password: ";
+                    cin>>q;
+                    h.book(w,q);
+                     break;
+            case 3: cout<<"\n Enter id (integer):- ";
+                    cin>>w;
+                    cout<<"\nEnter password: ";
+                    cin>>q;
+					 h.cancel(q,w);
+           			 break;
+           	case 4: h.display();
+			               default: cout<<"\nEnter valid operation.";
+        }
+        cout<<"\nDo you want to continue?(y/n): ";
+        cin>>c;
+    }while(c=='y'||c=='Y');
+	return 0;
+}
